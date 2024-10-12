@@ -1,0 +1,41 @@
+name: Build and Deploy
+
+
+on:
+  pull_request:
+    branches:
+      - v4
+  push:
+    branches:
+      - v4
+  workflow_dispatch:
+
+jobs:
+  build-and-test-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install AWS CLI
+        id: install-aws-cli
+        uses: unfor19/install-aws-cli-action@master
+        with:
+          version: 2
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+
+      - name: Check types and style
+        run: npm run check
+
+      - name: Test
+        run: npm test
+
+      - name: Ensure Quartz builds, check bundle info
+        run: npx quartz build --bundleInfo
+      
