@@ -1,4 +1,7 @@
 name: Build and Deploy
+on:
+  push:
+    branches: [v4]
 steps:
 - uses: actions/checkout@v4
 - uses: actions/setup-node@v4
